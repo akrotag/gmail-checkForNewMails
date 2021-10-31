@@ -2,8 +2,6 @@
 addr = "Your email here"
 passwrd = "Your password here"
 
-
-
 #################################################################
 #################################################################
 ##                                                             ##
@@ -13,6 +11,7 @@ passwrd = "Your password here"
 #################################################################
 
 import binascii
+import platform
 import imaplib
 import os
 import requests
@@ -178,7 +177,17 @@ f.close()
 server.close()
 
 
-subprocess.call(['C:\\Windows\\System32\\notepad.exe', path])
+###-Opening the file using the system's file reader-###
+userSystem = platform.system().lower()
 
-#Removes the text file
+if userSystem == "windows":
+    subprocess.call(['C:\\Windows\\System32\\notepad.exe', path])
+elif userSystem == "linux" or userSystem =="Darwin":
+    subprocess.call(['nano', path])
+else:
+    print("Unknown os")
+
+
+
+###-Removes the text file-###
 os.remove(path)
