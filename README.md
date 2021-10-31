@@ -11,11 +11,18 @@ git clone https://github.com/akrotag/gmail-checkForNewMails.git
 ```
 
 ## Usage
-First navigate to the script's directory, then
-```bash
-mail-checker.py
+
+first open the file with any text editor you want and repalce the first three lines with your email and password, it should look something like that:
+```python
+###-Sets account's password and adress-###
+addr = "yourEmailAdress@gmail.com"
+passwrd = "yourGmailPassword"
 ```
-or simply open it directly if you're on windows
+(for Linux)
+```bash
+python3 mail-checker.py
+```
+or simply open it directly if you're on windows and have python installed
 
 ## Limitations
 This script has some limitations: it can't read some mails because of their encoding, and because I couldn't test it on every mail system. it is tested on mails from gmail and hotmail/outlook (anything coming from microsoft)
