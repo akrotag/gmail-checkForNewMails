@@ -161,7 +161,7 @@ for num in data[0].split():
     f.write("\n\n\n#########################-New email from " + fromAddr + "-#########################")
     f.write("\n" + date)
     try:
-        f.write("\Subject: " + subject)
+        f.write("\nSubject: " + subject)
     except UnicodeEncodeError as error:
         f.write("\nError: Cloud not get the subject")
     try:    
