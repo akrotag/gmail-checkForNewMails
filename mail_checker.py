@@ -1,6 +1,8 @@
 ###-Sets account's password and adress-###
-addr = "Your email here"
-passwrd = "Your password here"
+addr = "YourEmail"
+passwrd = "YourSecretPassword"
+
+
 
 #################################################################
 #################################################################
@@ -11,7 +13,6 @@ passwrd = "Your password here"
 #################################################################
 
 import binascii
-import platform
 import imaplib
 import os
 import requests
@@ -54,12 +55,7 @@ while not(a):
 
 ###-Sets up server to get the mails-###
 server = imaplib.IMAP4_SSL('imap.gmail.com', '993')
-try:
-    server.login(addr, passwrd)
-except imaplib.IMAP4.error as error:
-    print("An error occured: wrong ceditentials\n\nCheck your email and password and make sure that you have enabled the less secure apps acess on your gmail account.\nFor more informations about less secure apps, go to https://support.google.com/a/answer/6260879")
-    input("Press return to leave")
-    exit()
+server.login(addr, passwrd)
 server.select('Inbox')
 
 ###-Gets the amount of unseen mails-###
@@ -80,11 +76,9 @@ satus, data = server.search(None, "(SINCE "+ n_days_ago_str+ ")", "Unseen")
 path = os.getcwd() + "\\" + "unseen.txt"
 f = open(path, "w+")
 
-message2 = "\nUnseen mails for the last 7 days"
 ###-Sets the message accordingly to the amount of messages-###
 if unseenAmount == 0:
     message = "0 new mails"
-    message2 = ""
 elif unseenAmount == 1:
     message = "1 new mail"
 else:
@@ -92,7 +86,7 @@ else:
 
 message += " on " + addr + " since the " + n_days_ago_str
 f.write(message)
-f.write(message2)
+f.write("\nUnseen mails for the last 7 days: ")
 
 
 for num in data[0].split():
@@ -136,10 +130,13 @@ for num in data[0].split():
             ###-When it finds the plain text part(the part that interests us), it starts extracting infos and splitting the string-###
             part = part.replace(': text/plain; charset="', "")              #Clears the beggining of the string
             encoding = part.split('Content-Transfer-Encoding: ')            #
-            encoding = encoding[1].split("\\r")[0]                          #Gets the mail encoding 
+            try:
+                encoding = encoding[1].split("\\r")[0]                          #Gets the mail encoding 
+            except IndexError as error:
+                encoding = " " 
             charset = part.split('"')[0]                                    #Gets the charset of the mail (aka how the characters are encoded to the browser)
             sorting = part.split("\\r\\n")                                  #
-            sorting = sorting[3:]                                           #
+            sorting = sorting[2:]                                           #
             del sorting[-1]                                                 #
             del sorting[-1]                                                 #Sorts the list to get the stuff that interests us
             for i in sorting:
@@ -150,7 +147,10 @@ for num in data[0].split():
                         print("Error decoding base64 string")
                 elif encoding == "quoted-printable":                         #Decode the string according to their encoding:
                     i = quopri.decodestring(i)                              #
-
+                else:
+                    bodytxt.append(i)
+                    body = "\n".join(bodytxt)
+                    continue
                 if charset.lower() == "utf-8":                              #
                     addToBody(i, "", charset)                               #
                 elif charset.lower() == "iso-8859-1":                       #Same but for the charset
@@ -177,17 +177,7 @@ f.close()
 server.close()
 
 
-###-Opening the file using the system's file reader-###
-userSystem = platform.system().lower()
+subprocess.call(['C:\\Windows\\System32\\notepad.exe', path])
 
-if userSystem == "windows":
-    subprocess.call(['C:\\Windows\\System32\\notepad.exe', path])
-elif userSystem == "linux" or userSystem =="Darwin":
-    subprocess.call(['nano', path])
-else:
-    print("Unknown os")
-
-
-
-###-Removes the text file-###
+#Removes the text file
 os.remove(path)
