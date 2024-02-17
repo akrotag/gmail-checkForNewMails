@@ -1,4 +1,4 @@
-# Gmail email reader
+# [Depecrated] Gmail email reader
 
 This script allows you to check if you have any new mails and print out your unread mails from the last 7 days in a text file.
 
